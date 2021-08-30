@@ -1,0 +1,12 @@
+# django
+**/venv
+**/media
+
+**/__pycache__
+
+.env
+
+# react items
+**/node_modules
+
+**/.eslintcache
