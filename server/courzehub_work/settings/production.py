@@ -5,7 +5,7 @@ from datetime import timedelta
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['work.courzehub.com']
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
