@@ -7,7 +7,9 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin, Group
 from django.contrib.postgres.fields import CIEmailField, CICharField
-from django.db.models import Model, DateField, DateTimeField, BooleanField, UUIDField, ImageField, TextField
+from django.db.models import Model, DateField, DateTimeField, BooleanField, UUIDField, ImageField, TextField, CharField
+
+from user.choices import gender, profile_type, referrer
 
 
 class MyAccountManager(BaseUserManager):
@@ -51,6 +53,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_superuser = BooleanField(default=False)
     photo = ImageField(
         upload_to='user_images', default='/user_images/avatar.png')
+    gender = CharField(null=True, choices=gender, max_length=50)
+    profile_type = CICharField(
+        choices=profile_type, null=True, blank=True, max_length=100)
+    account_disabled = BooleanField(default=False)
+    referrer = CharField(max_length=200, choices=referrer, default='Friend')
+    date_of_birth = DateField(null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']

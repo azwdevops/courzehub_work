@@ -54,7 +54,7 @@ const ForgotPassword = (props) => {
   };
 
   return (
-    <MinDialog isOpen={forgotPasswordForm}>
+    <MinDialog isOpen={forgotPasswordForm} maxWidth="500px">
       <form className="dialog" id={loading ? "formSubmitting" : ""}>
         <h3>Enter your email to reset password</h3>
         <p className={`response__message ${alert.alertType}`}>

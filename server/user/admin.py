@@ -7,5 +7,5 @@ User = get_user_model()
 
 @register(User)
 class UserAdmin(ModelAdmin):
-    list_display = ('email', 'username', 'is_active')
-    list_editable = ('is_active',)
+    list_display = ('email', 'username', 'is_active', 'profile_type')
+    list_editable = ('is_active', 'profile_type')

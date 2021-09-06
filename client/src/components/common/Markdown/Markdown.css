@@ -1,0 +1,23 @@
+.editor {
+  border: 1px solid lightgray;
+  padding: 5px;
+  border-radius: 10px;
+  max-width: 100%;
+}
+.editor__edit {
+  min-height: 220px;
+}
+#editorContent {
+  min-height: 220px;
+  max-height: 300px;
+  padding: 5px 20px;
+  border: 1px solid lightgray;
+  outline: none;
+  border-radius: 10px;
+  margin: 8px 5px 5px 5px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+#editorContent:focus {
+  border: 1px solid dodgerblue;
+}

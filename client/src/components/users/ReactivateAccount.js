@@ -21,12 +21,8 @@ import { setAlert } from "../../redux/actions/shared";
 
 const ReactivateAccount = (props) => {
   const { loading, alert, resendActivationForm } = props; // extract state from props
-  const {
-    startLoading,
-    newAlert,
-    closeResendActivation,
-    resendActivation,
-  } = props; // extract dispatch actions from props
+  const { startLoading, newAlert, closeResendActivation, resendActivation } =
+    props; // extract dispatch actions from props
 
   const [email, setEmail] = useState("");
 
@@ -57,6 +53,7 @@ const ReactivateAccount = (props) => {
   return (
     <MinDialog
       isOpen={resendActivationForm} // since the styles of min width applied globally is affecting the reactivate form width, apply inline styles
+      maxWidth="500px"
     >
       <form className="dialog" id={loading ? "formSubmitting" : ""}>
         <h3>Enter email to resend confirmation link</h3>

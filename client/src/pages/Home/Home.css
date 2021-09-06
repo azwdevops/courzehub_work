@@ -1,0 +1,28 @@
+.home {
+  display: flex;
+  flex-direction: column;
+  margin-top: 15vh;
+  justify-items: center;
+  height: 80vh;
+  text-align: center;
+  color: dodgerblue;
+  font-size: 4rem;
+}
+.home__left {
+  width: 100%;
+  align-self: center;
+  padding: 10px;
+  margin: 10px;
+}
+.home__right {
+  width: 100%;
+  align-self: center;
+  padding: 10px;
+  margin: 10px;
+}
+
+@media screen and (max-width: 768px) {
+  .home {
+    font-size: 2rem;
+  }
+}

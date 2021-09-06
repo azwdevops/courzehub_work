@@ -4,8 +4,9 @@ import Dialog from "@material-ui/core/Dialog";
 const MinDialog = (props) => {
   return (
     <Dialog
-      open={props.isOpen}
-      style={{ maxWidth: "500px", minWidth: "", margin: "0 auto" }}
+      open={props?.isOpen}
+      maxWidth="sm"
+      style={{ maxWidth: props?.maxWidth, margin: "auto" }}
       fullWidth
     >
       {props.children}

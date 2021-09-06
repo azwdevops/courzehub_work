@@ -10,23 +10,18 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import { ifEmpty } from "../shared/sharedFunctions";
 // import components/pages
 import ChangePassword from "../components/users/ChangePassword";
+import WorkerApplication from "./worker/components/WorkerApplication";
 // import redux API
 import { OPEN_CHANGE_PASSWORD, START_LOADING } from "../redux/actions/types";
 import { update_user } from "../redux/actions/auth";
 
 const Profile = (props) => {
-  const {
-    first_name,
-    last_name,
-    username,
-    email,
-    bio,
-    userId,
-    loading,
-  } = props; // extract state from props
+  const { first_name, last_name, username, email, bio, userId, loading } =
+    props; // extract state from props
   const { startLoading, updateUser, openChangePassword } = props; // extract dispatch actions from props
   // internal state
   const [updatedUser, setUpdatedUser] = useState({});
+  const [openWorkerApplication, setOpenWorkerApplication] = useState(false);
 
   useEffect(() => {
     setUpdatedUser({
@@ -52,6 +47,10 @@ const Profile = (props) => {
   // handle change function
   const handleChange = (e) => {
     setUpdatedUser({ ...updatedUser, [e.target.name]: e.target.value });
+  };
+
+  const openWorkerApplicationForm = () => {
+    setOpenWorkerApplication(true);
   };
 
   return (
@@ -108,6 +107,13 @@ const Profile = (props) => {
       <div className="profile__Buttons">
         <button
           type="button"
+          className="add__button"
+          onClick={openWorkerApplicationForm}
+        >
+          Worker Application
+        </button>
+        <button
+          type="button"
           className="change__password"
           onClick={openChangePassword}
         >
@@ -118,8 +124,14 @@ const Profile = (props) => {
         </button>
       </div>
 
-      {/* linked components */}
-      <ChangePassword />
+      {/* child components */}
+      {OPEN_CHANGE_PASSWORD && <ChangePassword />}
+      {openWorkerApplication && (
+        <WorkerApplication
+          openWorkerApplication={openWorkerApplication}
+          setOpenWorkerApplication={setOpenWorkerApplication}
+        />
+      )}
     </div>
   );
 };

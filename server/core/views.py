@@ -29,10 +29,10 @@ def validate_password(password):
         return "Password must be at least 8 characters", False
     elif re.search('[0-9]', password) is None:
         return "Password must contain a number", False
-    elif re.search('[A-Z]', password) is None:
-        return "Password must contain an uppercase letter", False
-    elif regex.search(password) is None:
-        return "Password must contain a special character", False
+    # elif re.search('[A-Z]', password) is None:
+    #     return "Password must contain an uppercase letter", False
+    # elif regex.search(password) is None:
+    #     return "Password must contain a special character", False
     else:
         return "", True
 
@@ -75,24 +75,25 @@ def get_object_or_none(model_name, **kwargs):
         return None
 
 
-
-#### TOKEN RELATED GENERATION, ENCODING AND DECODING
+# TOKEN RELATED GENERATION, ENCODING AND DECODING
 
 # method to generate an encoded token
 def generate_encoded_token(**kwargs):
     # kwargs can be any number of arguments in their key value pairs
     payload = {
         **kwargs,
-        "exp":datetime.utcnow() + timedelta(hours=24)
+        "exp": datetime.utcnow() + timedelta(hours=24)
     }
-    encoded_token = jwt.encode(payload, token_generation_key, algorithm="HS256")
+    encoded_token = jwt.encode(
+        payload, token_generation_key, algorithm="HS256")
     return encoded_token
 
 
 # method to decode an encoded token
 def decode_token(token):
     try:
-        decode_token = jwt.decode(token, token_generation_key, algorithms=["HS256"])
+        decode_token = jwt.decode(
+            token, token_generation_key, algorithms=["HS256"])
         return decode_token
     except jwt.ExpiredSignatureError:
         return 'expired token'
@@ -100,6 +101,51 @@ def decode_token(token):
         return 'invalid token'
 
 
-####### return error functions
+# validate file size on upload, to control size of uploaded attachments
+
+
+def file_size_okay(file):
+    file_size = file.size
+    # for now we use a maximum of 85MB or 85000KB
+    max_size = 85000 * 1024
+    if file_size > max_size:
+        return 'Attachment size exceeds maximum size allowed of 85MB', False
+    return '', True
+
+# validate file type either pdf, doc, docx, xls, xlsx
+
+
+def file_type_okay(file):
+    if file.name.lower().endswith(('.pdf', '.doc', '.docx', '.xls', 'csv', '.xlsx', '.jpg', 'jpeg', '.png')):
+        return '', True
+    return 'Please upload a valid file, .pdf, .doc, .docx, .xls, .xlsx, .jpg, .jpeg, .png', False
+
+
+# return error functions
 def unknown_error():
     return Response({'detail': 'An unknown error occurred'}, status=400)
+
+
+# return invalid user
+
+
+def invalid_user():
+    return Response({'detail': 'Unable to verify your authorization credentials'}, status=400)
+
+# return invalid serializer
+
+
+def invalid_serializer():
+    return Response({'detail': 'All fields are required and must have valid values'}, status=400)
+
+# return not permitted to perform action
+
+
+def permission_denied():
+    return Response({'detail': 'Not permitted to do that action'}, status=400)
+
+# return invalid organization
+
+
+def invalid_organization():
+    return Response({'detail': 'Invalid organization specified'}, status=400)

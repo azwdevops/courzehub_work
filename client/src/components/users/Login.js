@@ -87,7 +87,7 @@ const Login = (props) => {
 
   return (
     <>
-      <MinDialog isOpen={loginForm}>
+      <MinDialog isOpen={loginForm} maxWidth="500px">
         <form className="dialog" id={loading ? "formSubmitting" : ""}>
           <h3>Login here</h3>
           <p className={`response__message ${alert.alertType}`}>
