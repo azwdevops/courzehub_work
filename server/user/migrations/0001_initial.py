@@ -9,35 +9,49 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        ('auth', '0013_auto_20210906_1723'),
-    ]
+    # dependencies = [
+    #     ('auth', '0013_auto_20210906_1723'),
+    # ]
 
     operations = [
         migrations.CreateModel(
             name='User',
             fields=[
-                ('password', models.CharField(max_length=128, verbose_name='password')),
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('email', django.contrib.postgres.fields.citext.CIEmailField(max_length=100, unique=True, verbose_name='email')),
-                ('username', django.contrib.postgres.fields.citext.CICharField(max_length=50, unique=True)),
-                ('first_name', django.contrib.postgres.fields.citext.CICharField(max_length=100)),
-                ('last_name', django.contrib.postgres.fields.citext.CICharField(max_length=100)),
+                ('password', models.CharField(
+                    max_length=128, verbose_name='password')),
+                ('id', models.UUIDField(default=uuid.uuid4,
+                                        editable=False, primary_key=True, serialize=False)),
+                ('email', django.contrib.postgres.fields.citext.CIEmailField(
+                    max_length=100, unique=True, verbose_name='email')),
+                ('username', django.contrib.postgres.fields.citext.CICharField(
+                    max_length=50, unique=True)),
+                ('first_name', django.contrib.postgres.fields.citext.CICharField(
+                    max_length=100)),
+                ('last_name', django.contrib.postgres.fields.citext.CICharField(
+                    max_length=100)),
                 ('bio', models.TextField(blank=True, null=True)),
-                ('date_joined', models.DateTimeField(auto_now_add=True, verbose_name='date joined')),
-                ('last_login', models.DateTimeField(auto_now=True, verbose_name='last login')),
+                ('date_joined', models.DateTimeField(
+                    auto_now_add=True, verbose_name='date joined')),
+                ('last_login', models.DateTimeField(
+                    auto_now=True, verbose_name='last login')),
                 ('is_admin', models.BooleanField(default=False)),
                 ('is_active', models.BooleanField(default=False)),
                 ('is_staff', models.BooleanField(default=False)),
                 ('is_superuser', models.BooleanField(default=False)),
-                ('photo', models.ImageField(default='/user_images/avatar.png', upload_to='user_images')),
-                ('gender', models.CharField(choices=[('', 'Select gender'), ('Male', 'Male'), ('Female', 'Female')], max_length=50, null=True)),
-                ('profile_type', django.contrib.postgres.fields.citext.CICharField(blank=True, choices=[('', 'select profile'), ('Courzehub Staff', 'Courzehub Staff'), ('Organization Admin', 'Organization Admin'), ('System Admin', 'System Admin'), ('Worker', 'Worker')], max_length=100, null=True)),
+                ('photo', models.ImageField(
+                    default='/user_images/avatar.png', upload_to='user_images')),
+                ('gender', models.CharField(choices=[
+                 ('', 'Select gender'), ('Male', 'Male'), ('Female', 'Female')], max_length=50, null=True)),
+                ('profile_type', django.contrib.postgres.fields.citext.CICharField(blank=True, choices=[('', 'select profile'), ('Courzehub Staff', 'Courzehub Staff'), (
+                    'Organization Admin', 'Organization Admin'), ('System Admin', 'System Admin'), ('Worker', 'Worker')], max_length=100, null=True)),
                 ('account_disabled', models.BooleanField(default=False)),
-                ('referrer', models.CharField(choices=[('', 'Select referrer'), ('Facebook', 'Facebook'), ('Friend', 'Friend'), ('Google Search', 'Google Search'), ('Instagram', 'Instagram'), ('LinkedIn', 'LinkedIn'), ('TikTok', 'TikTok'), ('Twitter', 'Twitter')], default='Friend', max_length=200)),
+                ('referrer', models.CharField(choices=[('', 'Select referrer'), ('Facebook', 'Facebook'), ('Friend', 'Friend'), ('Google Search', 'Google Search'), (
+                    'Instagram', 'Instagram'), ('LinkedIn', 'LinkedIn'), ('TikTok', 'TikTok'), ('Twitter', 'Twitter')], default='Friend', max_length=200)),
                 ('date_of_birth', models.DateField(null=True)),
-                ('groups', models.ManyToManyField(blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', related_name='user_set', related_query_name='user', to='auth.Group', verbose_name='groups')),
-                ('user_permissions', models.ManyToManyField(blank=True, help_text='Specific permissions for this user.', related_name='user_set', related_query_name='user', to='auth.Permission', verbose_name='user permissions')),
+                ('groups', models.ManyToManyField(blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
+                                                  related_name='user_set', related_query_name='user', to='auth.Group', verbose_name='groups')),
+                ('user_permissions', models.ManyToManyField(blank=True, help_text='Specific permissions for this user.',
+                                                            related_name='user_set', related_query_name='user', to='auth.Permission', verbose_name='user permissions')),
             ],
             options={
                 'abstract': False,
