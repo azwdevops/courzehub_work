@@ -9,9 +9,9 @@ ALLOWED_HOSTS = []
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ['COURZEHUB_WORK_SECRET_KEY']
+SECRET_KEY = os.environ['SECRET_KEY']
 
-SITE_NAME = os.environ['COURZEHUB_WORK_SITE_NAME']
+SITE_NAME = os.environ['SITE_NAME']
 
 
 HEROKU = False
@@ -34,7 +34,7 @@ else:
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ['COURZEHUB_WORK_DB_NAME'],
+        'NAME': os.environ['DB_NAME'],
         'USER': os.environ['DB_USER'],
         'PASSWORD': os.environ['DB_USER_PASSWORD'],
         'HOST': os.environ['DB_HOST']
@@ -56,7 +56,7 @@ EMAIL_USE_TLS = os.environ['EMAIL_USE_TLS']
 
 AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
 AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
-AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME_COURZE_HUB_WORK']
+AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
 AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
@@ -71,7 +71,7 @@ SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': True,
 
     'ALGORITHM': 'HS256',
-    'SIGNING_KEY': os.environ['COURZEHUB_WORK_TOKEN_GENERATION_SECRET'],
+    'SIGNING_KEY': os.environ['TOKEN_GENERATION_SECRET'],
     'VERIFYING_KEY': None,
     'AUDIENCE': None,
     'ISSUER': None,
