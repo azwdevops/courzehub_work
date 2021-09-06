@@ -7,8 +7,8 @@ from django.conf import settings
 from core.views import generate_encoded_token
 
 if settings.PRODUCTION:
-    site_name = os.environ['SITE_NAME']
-    site_url = os.environ['SITE_URL']
+    site_name = os.environ['SITE_NAME_COURZEHUB_WORK']
+    site_url = os.environ['SITE_URL_COURZEHUB_WORK']
     email_sentby = os.environ['DEFAULT_SENDER_EMAIL']
 else:
     from decouple import config
