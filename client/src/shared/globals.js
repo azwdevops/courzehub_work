@@ -5,7 +5,7 @@ const globals = {
   unknown_error: "An unknown error occurred, please try again later",
   dev: false,
   testProduction: false, // for use in heroku
-  liveProduction: false, // for courzehub.com domain
+  liveProduction: true, // for work.courzehub.com domain
   devHome: "http://localhost:8000", // for local development
   testHome: "https://courzehub-work.herokuapp.com", // for heroku production
   productionHome: "https://work.courzehub.com", // for live production
