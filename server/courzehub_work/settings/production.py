@@ -6,6 +6,7 @@ from datetime import timedelta
 DEBUG = False
 
 ALLOWED_HOSTS = ['work.courzehub.com']
+CORS_ORIGIN_WHITELIST = ()
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -19,14 +20,10 @@ HEROKU = False
 if HEROKU:
     import django_heroku
     DEBUG = True  # for courzehub-work.herokuapp.com, we set debug to true to help with test environment testing
-    ALLOWED_HOSTS = []
-    CORS_ORIGIN_WHITELIST = ()
     # to help with database connection
     django_heroku.settings(locals())
 else:
     DEBUG = False  # for work.courzehub.com, we set debug to false
-    ALLOWED_HOSTS = []
-    CORS_ORIGIN_WHITELIST = ()
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
