@@ -5,6 +5,7 @@ task_status = (
     ('draft', 'draft'),
     ('submitted', 'submitted'),
     ('suspended', 'suspended'),
+    ('taken', 'taken'),
 )
 
 submission_status = (
@@ -27,4 +28,9 @@ worker_profile_status = (
     ('active', 'active'),
     ('suspended', 'suspended'),
     ('disabled', 'disabled')
+)
+
+course_payment_status = (
+    ('paid', 'paid'),  # initiated payment and payment confirmed
+    ('pending', 'pending'),  # initiated payment but payment not confirmed
 )

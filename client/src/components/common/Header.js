@@ -33,7 +33,9 @@ const Header = () => {
       <header className="header" id="header">
         <div className="header__toggle">
           <i className="bx bx-menu" id="header-toggle" onClick={showNavbar}></i>
-          <h1>CourZe Hub Work</h1>
+          <h1>
+            <Link to="/">CourZe Hub Work</Link>
+          </h1>
         </div>
 
         {session_cookie ? (

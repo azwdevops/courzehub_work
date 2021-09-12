@@ -21,11 +21,12 @@ const AddTask = (props) => {
     user_minimum_rating: "",
     status: "",
     attachment: "",
+    amount: "",
   });
   const [instructions, setInstructions] = useState("");
 
   // DESTRUCTURING
-  const { title, user_minimum_rating, status, attachment } = newTask;
+  const { title, user_minimum_rating, status, attachment, amount } = newTask;
 
   const handleChange = (e) => {
     setNewTask({ ...newTask, [e.target.name]: e.target.value });
@@ -60,6 +61,7 @@ const AddTask = (props) => {
     formData.append("status", status);
     formData.append("title", title);
     formData.append("instructions", instructions);
+    formData.append("amount", amount);
     newOrganizationTask(userId, formData, resetForm);
   };
 
@@ -89,6 +91,7 @@ const AddTask = (props) => {
               onChange={handleChange}
               value={user_minimum_rating}
               min="1"
+              step="0.1"
               max="5"
             />
           </span>
@@ -112,6 +115,19 @@ const AddTask = (props) => {
           <span>
             <label htmlFor="">Task Attachment</label>
             <input type="file" name="attachment" onChange={handleFileChange} />
+          </span>
+        </div>
+        <div className="dialog__row">
+          <span>
+            <label htmlFor="">Amount Payable</label>
+            <input
+              type="number"
+              name="amount"
+              min="1"
+              step="0.1"
+              onChange={handleChange}
+              value={amount}
+            />
           </span>
         </div>
         <div className="dialog__rowSingleItem">

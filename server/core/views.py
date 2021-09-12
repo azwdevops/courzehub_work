@@ -121,7 +121,22 @@ def file_type_okay(file):
     return 'Please upload a valid file, .pdf, .doc, .docx, .xls, .xlsx, .jpg, .jpeg, .png', False
 
 
-# return error functions
+# ACCOUNTING FUNCTIONS
+ # enforce double entry equivalent i.e debits = credits for any given transaction
+def enfore_double_entry_rule(**kwargs):
+    base_amount = kwargs['base_amount']
+    total_debits = kwargs['total_debits']
+    total_credits = kwargs['total_credits']
+
+    if base_amount == total_credits == total_debits:
+        return True
+    return False
+
+
+# END OF ACCOUNTING FUNCTIONS
+
+
+# RETURN ERROR FUNCTIONS
 def unknown_error():
     return Response({'detail': 'An unknown error occurred'}, status=400)
 

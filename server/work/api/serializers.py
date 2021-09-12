@@ -1,7 +1,6 @@
-from re import L
-from rest_framework.serializers import ModelSerializer, SerializerMethodField
+from rest_framework.serializers import ModelSerializer, SerializerMethodField, SlugRelatedField
 
-from work.models import Organization, Task, WorkerApplication, WorkerProfile
+from work.models import Organization, Task, WorkerApplication, WorkerProfile, TaskSubmission
 
 
 # create organization serializer
@@ -18,14 +17,29 @@ class OrganizationSerializer(ModelSerializer):
         else:
             return None
 
-# create task serializer
+# organization admin create task serializer
 
 
 class TaskSerializer(ModelSerializer):
+    pesapal_transaction = SerializerMethodField('get_pesapal_details')
+
     class Meta:
         model = Task
         fields = ('id', 'title', 'user_minimum_rating',
-                  'status', 'instructions')
+                  'status', 'instructions', 'amount', 'payment_status', 'pesapal_transaction')
+
+    # get pesapal details
+    def get_pesapal_details(self, obj):
+        # get all pesapal transactions that may be related to this task
+        task_pesapals = (
+            obj.task_pesapal_transaction.all().order_by('created'))
+        if len(task_pesapals) > 0:
+            return {
+                'pesapal_transaction_tracking_id': task_pesapals[0].pesapal_transaction,
+                'pesapal_merchant_reference': task_pesapals[0].merchant_reference
+            }
+        # if no pesapal transaction exists
+        return None
 
 # worker application serializer
 
@@ -72,6 +86,43 @@ class WorkerTaskViewSerializer(ModelSerializer):
         fields = ('id', 'title', 'instructions', 'attachment')
 
     def get_attachment_url(self, obj):
-        attachments = obj.task_attachments.all()
+        attachments = obj.task_attachments.filter(
+            is_active=True).order_by('created_on')
         # for now we just picked the first attachment
+        return attachments[0].attachment.url
+
+# worker ongoing tasks serializer
+
+
+class WorkerTaskSubmissionViewSerializer(ModelSerializer):
+    task = SlugRelatedField(slug_field='title', read_only=True)
+    attachment = SerializerMethodField('get_attachment_url')
+
+    class Meta:
+        model = TaskSubmission
+        fields = ('id', 'task', 'attachment', 'taken_on',
+                  'submission_status', 'submitted_on', 'submission_rating', 'review_notes')
+
+    def get_attachment_url(self, obj):
+        # task attachment defined by organization offering the task
+        attachments = obj.task.task_attachments.filter(
+            is_active=True).order_by('created_on')
+        # for now we just picked the first attachment
+        return attachments[0].attachment.url
+
+# organization admin task submission serializer
+
+
+class OrganizationAdminTaskSubmissionSerializer(ModelSerializer):
+    task = SlugRelatedField(slug_field='title', read_only=True)
+    attachment = SerializerMethodField('get_submission_attachment_url')
+
+    class Meta:
+        model = TaskSubmission
+        fields = ('id', 'task', 'submitted_on',
+                  'attachment', 'submission_rating', 'review_notes', 'submission_status')
+
+    def get_submission_attachment_url(self, obj):
+        attachments = obj.task_submission_attachments.filter(
+            is_active=True).order_by('created_on')
         return attachments[0].attachment.url

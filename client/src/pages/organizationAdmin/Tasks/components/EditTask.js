@@ -93,6 +93,7 @@ const EditTask = (props) => {
               value={user_minimum_rating}
               min="1"
               max="5"
+              step="0.1"
             />
           </span>
         </div>

@@ -14,6 +14,10 @@ urlpatterns = [
     # include api urls
     path('api/user/', include('user.api.urls')),
     path('api/work/', include('work.api.urls')),
+
+    # normal urls
+    path('pesapal/', include('pesapal.urls')),
+    path('accounting/', include('accounting.urls')),
 ]
 
 

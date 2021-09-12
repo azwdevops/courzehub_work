@@ -12,6 +12,7 @@ import EditTask from "./components/EditTask";
 // import redux API
 import { START_LOADING } from "../../../redux/actions/types";
 import { get_all_tasks } from "../../../redux/actions/work";
+import TaskSubmissions from "./components/TaskSubmissions";
 
 const MaintainTasks = (props) => {
   const { loading, organizationTasks, userId } = props;
@@ -19,6 +20,7 @@ const MaintainTasks = (props) => {
   const [openAddTask, setOpenAddTask] = useState(false);
   const [openEditTask, setOpenEditTask] = useState(false);
   const [currentTask, setCurrentTask] = useState({});
+  const [openTaskSubmissions, setOpenTaskSubmissions] = useState(false);
 
   useEffect(() => {
     if (organizationTasks?.length === 0 && userId) {
@@ -29,6 +31,12 @@ const MaintainTasks = (props) => {
 
   const openEditTaskForm = (task) => {
     setOpenEditTask(true);
+    setCurrentTask(task);
+  };
+
+  // open submissions form
+  const openTaskSubmissionsForm = (task) => {
+    setOpenTaskSubmissions(true);
     setCurrentTask(task);
   };
 
@@ -53,6 +61,8 @@ const MaintainTasks = (props) => {
                 <th>No:</th>
                 <th>Title</th>
                 <th>Edit</th>
+                <th>Payment Status</th>
+                <th>Submissions</th>
               </tr>
               {organizationTasks?.map((task, index) => (
                 <tr className="table__listingItem">
@@ -63,6 +73,35 @@ const MaintainTasks = (props) => {
                     onClick={() => openEditTaskForm(task)}
                   >
                     edit
+                  </td>
+                  <td>
+                    {task?.payment_status === null ? (
+                      <a
+                        href={`/accounting/make-payment/${task?.id}/${
+                          task?.amount
+                        }/${Math.floor(Math.random() * 10000000)}/`}
+                        className="red bd button"
+                      >
+                        Pay
+                      </a>
+                    ) : task?.payment_status === "paid" ? (
+                      <span className="green bd button">Paid</span>
+                    ) : (
+                      task?.pesapal && (
+                        <a
+                          href={`/pesapal/transaction/completed/?pesapal_merchant_reference=${task?.pesapal_transaction?.pesapal_merchant_reference}&pesapal_transaction_tracking_id=${task?.pesapal_transaction?.pesapal_transaction_tracking_id}`}
+                          className="dodgerblue bd button__sp"
+                        >
+                          Confirm Payment
+                        </a>
+                      )
+                    )}
+                  </td>
+                  <td
+                    className="button dodgerblue bd"
+                    onClick={() => openTaskSubmissionsForm(task)}
+                  >
+                    View
                   </td>
                 </tr>
               ))}
@@ -82,6 +121,13 @@ const MaintainTasks = (props) => {
           setOpenEditTask={setOpenEditTask}
           currentTask={currentTask}
           setCurrentTask={setCurrentTask}
+        />
+      )}
+      {openTaskSubmissions && (
+        <TaskSubmissions
+          openTaskSubmissions={openTaskSubmissions}
+          setOpenTaskSubmissions={setOpenTaskSubmissions}
+          currentTaskId={currentTask?.id}
         />
       )}
     </>

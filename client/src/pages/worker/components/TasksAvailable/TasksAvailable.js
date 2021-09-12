@@ -4,14 +4,15 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 // import styles
 // import material ui items
+import CircularProgress from "@material-ui/core/CircularProgress";
 // import shared/global items
 import API from "../../../../shared/axios";
 // import components/pages
 import MaxDialog from "../../../../components/common/MaxDialog";
+import Instructions from "./components/Instructions";
 // import redux API
 import { START_LOADING, STOP_LOADING } from "../../../../redux/actions/types";
 import { showError } from "../../../../redux/actions/shared";
-import Instructions from "./components/Instructions";
 
 const TasksAvailable = (props) => {
   const { openTasksAvailable, userId, loading } = props;
@@ -27,7 +28,7 @@ const TasksAvailable = (props) => {
     if (userId) {
       startLoading();
       const fetchData = async () => {
-        const url = `/api/work/worker-get-tasks-available/${userId}/`;
+        const url = `/api/work/worker-tasks-available/${userId}/`;
         await API.get(url).then((res) => {
           setAvailableTasks(res.data?.available_tasks);
         });
@@ -43,11 +44,40 @@ const TasksAvailable = (props) => {
     setOpenInstructions(true);
   };
 
+  // function to accept task
+  const acceptTask = (e, taskId) => {
+    e.preventDefault();
+    if (window.confirm(`Accept this task and start working`)) {
+      startLoading();
+      const postData = async () => {
+        const url = `/api/work/worker-tasks-available/${userId}/`;
+        const body = {
+          taskId,
+        };
+        await API.post(url, body).then((res) => {
+          // remove taken task from available tasks
+          setAvailableTasks(
+            availableTasks.filter((task) => task.id !== res.data?.taskId)
+          );
+          return window.alert(res.data?.detail);
+        });
+      };
+      postData()
+        .catch((err) => showError(err))
+        .finally(() => stopLoading());
+    }
+  };
+
   return (
     <>
       <MaxDialog isOpen={openTasksAvailable} maxWidth="1200px">
         <div className="dialog" id={loading ? "pageSubmitting" : ""}>
           <h3>Tasks available</h3>
+          {loading && (
+            <CircularProgress
+              style={{ position: "absolute", marginLeft: "45%" }}
+            />
+          )}
           {availableTasks?.length > 0 ? (
             <table className="table__listing">
               <tr className="table__listingHeader">
@@ -55,6 +85,7 @@ const TasksAvailable = (props) => {
                 <th>Title</th>
                 <th>Instructions</th>
                 <th>Attachment</th>
+                <th>Action</th>
               </tr>
               {availableTasks?.map((task, index) => (
                 <tr className="table__listingItem" key={task?.id}>
@@ -74,6 +105,12 @@ const TasksAvailable = (props) => {
                     >
                       Open
                     </Link>
+                  </td>
+                  <td
+                    className="dodgerblue bd button"
+                    onClick={(e) => acceptTask(e, task?.id)}
+                  >
+                    Accept
                   </td>
                 </tr>
               ))}

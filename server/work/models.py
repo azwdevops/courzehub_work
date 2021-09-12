@@ -6,7 +6,7 @@ from django.db.models import Model, UUIDField, DecimalField, OneToOneField, PROT
 from django.contrib.postgres.fields import CICharField
 from django.contrib.auth import get_user_model
 
-from work.choices import task_status, submission_status, worker_profile_status, worker_application_status
+from work.choices import task_status, submission_status, worker_profile_status, worker_application_status, course_payment_status
 
 User = get_user_model()
 
@@ -49,7 +49,10 @@ class Task(Model):
     # minimum rating required for user to do this task
     user_minimum_rating = DecimalField(max_digits=3, decimal_places=2)
     is_active = BooleanField(default=False)
+    amount = DecimalField(max_digits=20, decimal_places=2, null=True)
     status = CharField(max_length=100, choices=task_status)
+    payment_status = CICharField(
+        max_length=20, choices=course_payment_status, null=True)
     instructions = TextField(null=True, blank=True)
 
     def __str__(self):
@@ -62,6 +65,8 @@ class TaskAttachment(Model):
     task = ForeignKey(Task, null=True, on_delete=PROTECT,
                       related_name='task_attachments')
     attachment = FileField(upload_to='task_attachments/%Y/%m/%d')
+    created_on = DateTimeField(auto_now_add=True)
+    is_active = BooleanField(default=True)
 
     def __str__(self):
         return self.task.title
@@ -108,9 +113,15 @@ class WorkerProfile(Model):
                              null=True, related_name='profile_disabled_by', blank=True)
     disabled_notes = CharField(max_length=800, null=True, blank=True)
     disabled_on = DateTimeField(null=True, blank=True)
-    overall_rating = DecimalField(max_digits=3, decimal_places=2, default=5.0)
+    average_overall_rating = DecimalField(
+        max_digits=3, decimal_places=2, default=5.0)
     # to avoid rating going beyond 5.0, we assume the user has completed once task and give them a rating of 5.0
     tasks_submitted = PositiveIntegerField(default=1)
+    total_cumulative_rating = DecimalField(
+        max_digits=50, decimal_places=2, default=5.0)
+    # defines the share that goes to courzehub
+    courzehub_commission = DecimalField(
+        max_digits=10, decimal_places=2, default=0.3)
 
     def __str__(self):
         return self.user.username
@@ -123,7 +134,8 @@ class TaskSubmission(Model):
                       related_name='task_submissions')
     submitted_by = ForeignKey(User, on_delete=PROTECT,
                               null=True, related_name='task_submitted_by')
-    submitted_on = DateTimeField(auto_now_add=True)
+    taken_on = DateTimeField(auto_now_add=True, null=True)
+    submitted_on = DateTimeField(null=True, blank=True)
     submission_rating = DecimalField(
         max_digits=3, decimal_places=2, null=True, blank=True)
     reviewed_by = ForeignKey(User, on_delete=PROTECT,
@@ -140,8 +152,11 @@ class TaskSubmission(Model):
 
 
 class TaskSubmissionAttachment(Model):
-    task_submission = ForeignKey(Task, null=True, on_delete=PROTECT)
+    task_submission = ForeignKey(
+        TaskSubmission, null=True, on_delete=PROTECT, related_name='task_submission_attachments')
     attachment = FileField(upload_to='task_submission_attachments/%Y/%m/%d')
+    created_on = DateTimeField(auto_now_add=True)
+    is_active = BooleanField(default=True)
 
     def __str__(self):
         return self.task_submission.task.title

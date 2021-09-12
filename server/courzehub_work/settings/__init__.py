@@ -6,7 +6,7 @@ from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-PRODUCTION = True
+PRODUCTION = False
 
 # production settings
 if PRODUCTION:
@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'core',
     'user',
     'appemail',
+    'pesapal',
+    'accounting',
     'work'
 ]
 
@@ -129,3 +131,13 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'build/static')
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+
+# PESAPAL CONFIGURATION
+PESAPAL_OAUTH_CALLBACK_URL = "transaction_completed"
+PESAPAL_OAUTH_SIGNATURE_METHOD = "SignatureMethod_HMAC_SHA1"
+PESAPAL_TRANSACTION_DEFAULT_REDIRECT_URL = "payment"
+PESAPAL_OAUTH_SIGNATURE_METHOD = "SignatureMethod_HMAC_SHA1"
+PESAPAL_TRANSACTION_FAILED_REDIRECT_URL = ""
+PESAPAL_ITEM_DESCRIPTION = False
+PESAPAL_TRANSACTION_MODEL = "pesapal.PesapalTransaction"

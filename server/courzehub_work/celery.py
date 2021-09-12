@@ -18,5 +18,5 @@ app.autodiscover_tasks()
 app.conf.broker_url = BASE_REDIS_URL
 
 
-# celery -A myproject worker -l info                    ==== START CELERY IN LINUX
-# celery -A myproject worker -l info --pool=solo        ==== START CELERY IN WINDOWS
+# celery -A courzehub_work worker -l info                    ==== START CELERY IN LINUX
+# celery -A courzehub_work worker -l info --pool=solo        ==== START CELERY IN WINDOWS

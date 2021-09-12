@@ -62,6 +62,9 @@ export const new_organization_task =
           payload: res.data?.new_task,
         });
         window.alert(res.data?.detail);
+        window.location.replace(
+          `/accounting/make-payment/${res.data?.taskId}/${res.data?.taskAmount}/${res.data?.merchant_ref}/`
+        );
       })
       .catch((err) => showError(err))
       .finally(() => stopLoading(dispatch));

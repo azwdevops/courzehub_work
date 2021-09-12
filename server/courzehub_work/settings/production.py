@@ -86,3 +86,16 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
+
+
+# retain these even in development environment since at times we need the live pesapal to test transaction completion
+PESAPAL_DEMO = False
+if PESAPAL_DEMO == True:
+    PESAPAL_CONSUMER_KEY = os.environ['PESAPAL_CONSUMER_KEY_DEMO']
+    PESAPAL_CONSUMER_SECRET = os.environ[
+        'PESAPAL_CONSUMER_SECRET_DEMO']
+else:
+    PESAPAL_CONSUMER_KEY = os.environ[
+        'PESAPAL_CONSUMER_KEY_PRODUCTION']
+    PESAPAL_CONSUMER_SECRET = os.environ[
+        'PESAPAL_CONSUMER_SECRET_PRODUCTION']

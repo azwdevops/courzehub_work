@@ -1,0 +1,46 @@
+{% extends "base.html" %} {% block content %}
+<div
+  style="width: 95%; max-width: 600px; margin: 10vh auto; text-align: center"
+>
+  <h3 style="color: dodgerblue">Payment Confirmation Page</h3>
+  <p></p>
+  <blockquote>{{ message }}</blockquote>
+  <div
+    style="display: flex; justify-content: space-evenly; align-items: center"
+  >
+    <a
+      href="{{ transaction_status_url }}"
+      style="
+        background: linear-gradient(to right, dodgerblue, #5b18a8);
+        color: #ffffff;
+        padding: 5px 10px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+      "
+      >Check Status</a
+    >
+  </div>
+</div>
+
+{% endblock content %} {% block javascript %} {{ block.super }}
+<script type="text/javascript">
+  // function to go to maintain tasks page deleting disabling go back to payment page
+  function myCourses() {
+    window.history.pushState("", "", "/organization-admin/maintain-tasks/");
+    window.location.reload();
+  }
+</script>
+{% if payment_status == 1 %}
+<script type="text/javascript">
+  setTimeout(function () {
+    location.href = "/organization-admin/maintain-tasks/";
+  }, 3000);
+
+  let counter = 3;
+  let intervalID = setInterval(function () {
+    $(".countdown").text(--counter);
+    if (counter == 0) clearInterval(intervalID);
+  }, 1000);
+</script>
+{% endif %} {% endblock javascript %}

@@ -1,0 +1,7 @@
+.task__submissionForm {
+  max-width: 100px;
+}
+.task__submissionForm > form {
+  display: flex;
+  align-items: center;
+}

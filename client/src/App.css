@@ -273,7 +273,7 @@ a {
 .table__listingHeader {
   color: white;
   background: linear-gradient(
-    to right,
+    to top,
     var(--theme-color-1),
     var(--theme-color-2)
   );

@@ -16,7 +16,7 @@ SITE_NAME = config('SITE_NAME')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['work.courzehub.com']
+ALLOWED_HOSTS = []
 
 CORS_ORIGIN_WHITELIST = ('http://127.0.0.1:8000',
                          'http://localhost:3000', 'http://localhost:8000', 'http://127.0.0.1:3000')
@@ -77,3 +77,13 @@ EMAIL_USE_TLS = config('EMAIL_USE_TLS')
 # the media options here
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+
+# retain these even in development environment since at times we need the live pesapal to test transaction completion
+PESAPAL_DEMO = False
+if PESAPAL_DEMO == True:
+    PESAPAL_CONSUMER_KEY = config('PESAPAL_CONSUMER_KEY_DEMO')
+    PESAPAL_CONSUMER_SECRET = config('PESAPAL_CONSUMER_SECRET_DEMO')
+else:
+    PESAPAL_CONSUMER_KEY = config('PESAPAL_CONSUMER_KEY_PRODUCTION')
+    PESAPAL_CONSUMER_SECRET = config('PESAPAL_CONSUMER_SECRET_PRODUCTION')

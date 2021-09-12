@@ -16,8 +16,16 @@ import { OPEN_CHANGE_PASSWORD, START_LOADING } from "../redux/actions/types";
 import { update_user } from "../redux/actions/auth";
 
 const Profile = (props) => {
-  const { first_name, last_name, username, email, bio, userId, loading } =
-    props; // extract state from props
+  const {
+    first_name,
+    last_name,
+    username,
+    email,
+    bio,
+    userId,
+    loading,
+    has_applied_as_worker,
+  } = props; // extract state from props
   const { startLoading, updateUser, openChangePassword } = props; // extract dispatch actions from props
   // internal state
   const [updatedUser, setUpdatedUser] = useState({});
@@ -105,13 +113,16 @@ const Profile = (props) => {
         <textarea name="bio" value={updatedUser.bio} onChange={handleChange} />
       </div>
       <div className="profile__Buttons">
-        <button
-          type="button"
-          className="add__button"
-          onClick={openWorkerApplicationForm}
-        >
-          Worker Application
-        </button>
+        {!has_applied_as_worker && (
+          <button
+            type="button"
+            className="add__button"
+            onClick={openWorkerApplicationForm}
+          >
+            Worker Application
+          </button>
+        )}
+
         <button
           type="button"
           className="change__password"
@@ -144,6 +155,7 @@ const mapStateToProps = (state) => {
     email: state.auth.user?.email,
     bio: state.auth.user?.bio,
     userId: state.auth.user?.id,
+    has_applied_as_worker: state.auth.user?.has_applied_as_worker,
     loading: state.shared?.loading,
   };
 };

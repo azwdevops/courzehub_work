@@ -1,0 +1,31 @@
+<nav
+  class="navbar navbar-light bg-primary"
+  style="background: linear-gradient(to bottom, dodgerblue, #4723d9)"
+>
+  <div class="container-fluid">
+    <a
+      class="text-white"
+      href="/"
+      style="
+        font-size: 1.2rem;
+        font-weight: 700;
+        padding: 10px;
+        text-decoration: none;
+      "
+      >CourZe Hub Work</a
+    >
+
+    <button
+      class="btn btn-outline-success bg-light"
+      type="button"
+      onclick="myTasks()"
+    >
+      Tasks
+    </button>
+  </div>
+  <script>
+    function myTasks() {
+      window.location.replace("/organization-admin/maintain-tasks/");
+    }
+  </script>
+</nav>
