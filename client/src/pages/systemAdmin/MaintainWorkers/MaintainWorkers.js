@@ -1,8 +1,7 @@
 // import installed packages
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import moment from "moment";
-import { useState } from "react";
 
 // import styles
 // import material ui items
@@ -13,6 +12,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import { START_LOADING } from "../../../redux/actions/types";
 import { get_workers } from "../../../redux/actions/work";
 import EditWorkerApplication from "./components/EditWorkerApplication";
+import EditWorker from "./components/EditWorker";
 
 const MaintainWorkers = (props) => {
   const { workers, workers_applications, userId, loading } = props;
@@ -20,6 +20,8 @@ const MaintainWorkers = (props) => {
   const [openEditWorkerApplication, setOpenEditWorkerApplication] =
     useState(false);
   const [currentWorkerApplication, setCurrentWorkerApplication] = useState({});
+  const [currentWorker, setCurrentWorker] = useState({});
+  const [openEditWorker, setOpenEditWorker] = useState(false);
 
   // useEffect to get all workers and applications
   useEffect(() => {
@@ -29,9 +31,16 @@ const MaintainWorkers = (props) => {
     }
   }, [getWorkers, startLoading, userId, workers_applications?.length]);
 
+  // open edit worker application
   const openEditWorkerApplicationForm = (worker_application) => {
     setOpenEditWorkerApplication(true);
     setCurrentWorkerApplication(worker_application);
+  };
+
+  // open edit worker
+  const openEditWorkerForm = (worker) => {
+    setCurrentWorker(worker);
+    setOpenEditWorker(true);
   };
 
   return (
@@ -47,11 +56,20 @@ const MaintainWorkers = (props) => {
               <tr className="table__listingHeader">
                 <th>No:</th>
                 <th>Name</th>
+                <th>Status</th>
+                <th>Update</th>
               </tr>
               {workers?.map((worker, index) => (
                 <tr className="table__listingItem">
                   <td>{index + 1}</td>
                   <td>{worker?.full_name}</td>
+                  <td>{worker?.profile_status}</td>
+                  <td
+                    className="dodgerblue bd button__sp"
+                    onClick={() => openEditWorkerForm(worker)}
+                  >
+                    edit
+                  </td>
                 </tr>
               ))}
             </>
@@ -78,7 +96,7 @@ const MaintainWorkers = (props) => {
                   <td>{moment(worker_application.applied_on).format("LLL")}</td>
                   {worker_application?.status !== "approved" ? (
                     <td
-                      className="button dodgerblue bd"
+                      className="button__sp dodgerblue bd"
                       onClick={() =>
                         openEditWorkerApplicationForm(worker_application)
                       }
@@ -103,6 +121,14 @@ const MaintainWorkers = (props) => {
           setOpenEditWorkerApplication={setOpenEditWorkerApplication}
           currentWorkerApplication={currentWorkerApplication}
           setCurrentWorkerApplication={setCurrentWorkerApplication}
+        />
+      )}
+      {openEditWorker && (
+        <EditWorker
+          openEditWorker={openEditWorker}
+          setOpenEditWorker={setOpenEditWorker}
+          currentWorker={currentWorker}
+          setCurrentWorker={setCurrentWorker}
         />
       )}
     </>

@@ -2,6 +2,8 @@ import random
 from decimal import Decimal as D
 from random import randint
 from datetime import datetime
+
+from django.utils.timezone import make_aware
 from django.contrib.auth import get_user_model
 
 from rest_framework.views import APIView
@@ -84,10 +86,26 @@ class OrganizationView(APIView):
             organization = serializer.save()
             organization.created_by = user
             organization.save()
+
+            # create organization ledger here
+            self.create_organization_ledger(user, organization)
+
             organization_data = OrganizationSerializer(organization).data
             return Response({'detail': 'Organization created successfully', 'organization_data': organization_data}, status=201)
         else:
             return invalid_serializer()
+
+    # method to create organization ledger
+    def create_organization_ledger(self, user, organization):
+        ledger_kwargs = {
+            'ledger_group': get_object_or_none(LedgerGroup, name__iexact='Organization Payables'),
+            'name': f'{organization.name} organization payable ledger',
+            'organization': organization,
+            'created_by': user,
+            'description': 'Organization payable ledger',
+            'is_balance_sheet_item': True,
+        }
+        Ledger.objects.create(**ledger_kwargs)
 
     def get(self, request, **kwargs):
         userId = kwargs['userId']
@@ -148,6 +166,12 @@ class OrganizationView(APIView):
             Organization, organization_admin=admin_to_add)
         if already_admin:
             return Response({'detail': 'That user is already an organization admin'}, status=400)
+
+        # check if user is already a worker, disallow worker becoming admin for now until further notice
+        worker_profile = get_object_or_none(WorkerProfile, user=admin_to_add)
+        if worker_profile:
+            return Response({'detail': 'You cannot add an existing worker as an organization admin'}, status=400)
+
         organization.organization_admin = admin_to_add
         organization.save()
         organization.organization_admin.profile_type = 'Organization Admin'
@@ -332,6 +356,12 @@ class WorkerApplicationView(APIView):
                 WorkerApplication, id=data['applicationId'])
             if not application:
                 return Response({'detail': 'Invalid worker application'}, status=400)
+
+            # check first if user is an organization admin and disable them from becoming a worker
+            is_organization_admin = application.user.organization_admin
+            if is_organization_admin:
+                return Response({'detail': 'That user is an organization admin thus cannot be a worker'}, status=400)
+
             application.rejection_reason = data['rejection_reason']
             application.status = data['status']
             application.save()
@@ -344,7 +374,7 @@ class WorkerApplicationView(APIView):
 
                 # create worker ledger
                 """
-                    user => this is the one approving the worker application, i.e the System Admin mostly
+                    user => this is the one approving the worker application, i.e the System Admin
                     application.user => user applying to become a worker
                 """
                 self.create_worker_ledger(user, application.user)
@@ -366,7 +396,49 @@ class WorkerApplicationView(APIView):
 
         # this may be used to make changes in worker profile such as suspending a worker or disabling their account
         elif data['worker_or_application'] == 'worker':
-            pass
+            worker_profile = get_object_or_none(
+                WorkerProfile, id=data['workerId'])
+            if not worker_profile:
+                return Response({'detail': 'Invalid worker specified'}, status=400)
+            worker_profile.profile_status = data['profile_status']
+            worker_profile.save()
+
+            # if worker has been suspended, update this
+            if worker_profile.profile_status == 'suspended':
+                worker_profile.suspended_by = user
+                worker_profile.suspension_notes = data['suspension_notes']
+                worker_profile.suspended_on = make_aware(datetime.now())
+                worker_profile.save()
+
+                # change profile type to None to prevent worker from having dashboard access
+                worker_profile.user.profile_type = None
+                worker_profile.user.save()
+
+            # if worker has been updated, update this
+            elif worker_profile.profile_status == 'disabled':
+                worker_profile.disabled_by = user
+                worker_profile.disabled_notes = data['disabled_notes']
+                worker_profile.disabled_on = make_aware(datetime.now())
+                worker_profile.save()
+
+                # change profile type to None to prevent worker from having dashboard access
+                worker_profile.user.profile_type = None
+                worker_profile.user.save()
+
+            # if worker status has been updated to active
+            elif worker_profile.profile_status == 'active':
+                # change profile type to None to prevent worker from having dashboard access
+                worker_profile.user.profile_type = 'Worker'
+                worker_profile.user.save()
+
+            worker_data = WorkerProfileSerializer(worker_profile).data
+            # where only application is being edited
+            updated_application = {
+                **worker_data,
+                'action_type': 'worker'
+            }
+            return Response({'detail': 'Worker updated', 'updated_application': updated_application}, status=200)
+
     # method to create worker profile if approved
 
     def create_worker_profile(self, user):
@@ -383,7 +455,7 @@ class WorkerApplicationView(APIView):
     def create_worker_ledger(self, user, worker):
         ledger_kwargs = {
             'ledger_group': get_object_or_none(LedgerGroup, name__iexact='Worker Payables'),
-            'name': f'{worker.username} payable ledger',
+            'name': f'{worker.username} worker payable ledger',
             'user_ledger': worker,
             'created_by': user,
             'description': 'Worker payable ledger',
@@ -440,15 +512,17 @@ class WorkerTasksAvailableView(APIView):
             the organization that has offered this work has paid for them to be done by workers
         """
         tasks_available = Task.objects.filter(
-            is_active=True, status='available', payment_status='paid', user_minimum_rating__lte=worker_rating)
+            is_active=True, status='available', payment_status='paid', user_minimum_rating__lte=worker_rating).exclude(task_submissions__submission_status='rejected')
 
         # for now we load a set of 20 random tasks if tasks are more than 25 else we load all tasks
         if len(tasks_available) > 20:
             random_sample_tasks = random.sample(list(tasks_available), 20)
         else:
             random_sample_tasks = tasks_available
+        worker_profile = is_valid_worker[2]
+        # we send context to serializer to allow getting the commission rate for worker
         tasks_available_data = WorkerTaskViewSerializer(
-            random_sample_tasks, many=True).data
+            random_sample_tasks, many=True, context={'worker_profile': worker_profile}).data
 
         return Response({'detail': 'success', 'available_tasks': tasks_available_data}, status=200)
 
@@ -489,7 +563,7 @@ class WorkerTasksOngoingView(APIView):
             attachment=attachment
         )
         # update task submission details
-        task_submission.submitted_on = datetime.now()
+        task_submission.submitted_on = make_aware(datetime.now())
         task_submission.submission_status = 'submitted'
         task_submission.save()
         return Response({'detail': 'Task submitted successfully', 'taskId': task_submission.id}, status=200)
@@ -507,6 +581,36 @@ class WorkerTasksOngoingView(APIView):
             ongoing_tasks, many=True).data
 
         return Response({'detail': 'success', 'ongoing_tasks': ongoing_tasks_data}, status=200)
+
+    # method to handle return task which includes deleting submission and changing task status from taken to available
+    def patch(self, request, **kwargs):
+        # get valid worker return values
+        is_valid_worker = valid_worker(request, kwargs['userId'])
+        if not is_valid_worker[0]:
+            response_message = is_valid_worker[1]
+            return Response({'detail': response_message}, status=400)
+        user = is_valid_worker[1]
+        data = request.data
+        task_submission = get_object_or_none(
+            TaskSubmission, id=data['taskSubmissionId'], submitted_by=user)
+        if not task_submission:
+            return Response({'detail': 'Invalid task returned'}, status=400)
+        task_submission_attachments = TaskSubmissionAttachment.objects.filter(
+            task_submission=task_submission)
+
+        # delete all attachments
+        for task_submission_attachment in task_submission_attachments:
+            task_submission_attachment.attachment.delete()
+            task_submission_attachment.delete()
+
+        # update task status from taken to available
+        task_submission.task.status = 'available'
+        task_submission.task.save()
+
+        task_submission.delete()
+
+        return Response({'detail': 'Task returned'}, status=200)
+
 
 # view for submitted tasks
 
@@ -554,7 +658,7 @@ class OrganizationAdminTaskSubmissionsView(APIView):
 
         if serializer.is_valid():
             task_submission = serializer.save()
-            task_submission.reviewed_on = datetime.now()
+            task_submission.reviewed_on = make_aware(datetime.now())
             task_submission.reviewed_by = is_organization_admin[1]
             task_submission.save()
 
@@ -582,37 +686,24 @@ class OrganizationAdminTaskSubmissionsView(APIView):
                     }
                     self.base_transaction_recognize_worker_earnings_and_courzehub_commission_fees(
                         **base_transaction_kwargs)
+                    rated_submission = OrganizationAdminTaskSubmissionSerializer(
+                        task_submission).data
+                    return Response({'detail': 'Task submission rated successfully', 'rated_submission': rated_submission}, status=200)
                 elif task_submission.submission_status == 'rejected':
                     # return task to be available to be done by other workers
                     task_submission.task.status = 'available'
                     task_submission.task.save()
 
-            rated_submission = OrganizationAdminTaskSubmissionSerializer(
-                task_submission).data
-            return Response({'detail': 'Task submission rated successfully', 'rated_submission': rated_submission}, status=200)
+                    # get the most recent submission and make it inactive
+                    task_submission_attachment = task_submission.task_submission_attachments.filter(
+                        is_active=True).order_by('created_on')
+                    if len(task_submission_attachment) > 0:
+                        task_submission_attachment[0].is_active = False
+                        task_submission_attachment[0].save()
+                    return Response({'detail': 'Task submission rated successfully'}, status=200)
 
         else:
             return invalid_serializer()
-
-    def get(self, request, **kwargs):
-        is_organization_admin = verify_organization_admin(
-            request, kwargs['userId'])
-
-        if not is_organization_admin[0]:
-            return Response({'detail': is_organization_admin[1]}, status=400)
-
-        task = get_object_or_none(Task, id=kwargs['taskId'])
-        if not task:
-            return Response({'detail': 'Invalid task specified'}, status=400)
-        if is_organization_admin[2] != task.organization:
-            return Response({'detail': 'Permission denied'}, status=400)
-
-        task_submissions = TaskSubmission.objects.filter(
-            task=task, submission_status='submitted')
-        task_submissions_data = OrganizationAdminTaskSubmissionSerializer(
-            task_submissions, many=True).data
-
-        return Response({'detail': 'success', 'task_submissions': task_submissions_data}, status=200)
 
     # method to determine if worker gets paid based on whether submission was accepted by organization that offered the task
     def base_transaction_recognize_worker_earnings_and_courzehub_commission_fees(self, **kwargs):
@@ -646,7 +737,7 @@ class OrganizationAdminTaskSubmissionsView(APIView):
         # post transaction to tasks payment funds ledger as a Debit
         tasks_payment_ledger_kwargs = {
             'base_transaction': base_transaction,
-            'ledger': get_object_or_none(Ledger, name__iexact='Tasks Payment Funds'),
+            'ledger': get_object_or_none(Ledger, name__iexact=f'{base_transaction.task.organization.name} organization payable ledger'),
             'entry_type': 'Debit',
             'amount': base_transaction.amount,
         }
@@ -658,7 +749,7 @@ class OrganizationAdminTaskSubmissionsView(APIView):
         # post earnings to the workers ledger as a Credit
         worker_earnings_kwargs = {
             'base_transaction': base_transaction,
-            'ledger': get_object_or_none(Ledger, name__iexact=f'{worker_profile.user.username} payable ledger'),
+            'ledger': get_object_or_none(Ledger, name__iexact=f'{worker_profile.user.username} worker payable ledger'),
             'entry_type': 'Credit',
             'amount': (1 - worker_profile.courzehub_commission) * base_transaction.amount
         }
@@ -708,3 +799,23 @@ class OrganizationAdminTaskSubmissionsView(APIView):
             worker_profile.average_overall_rating = worker_profile.total_cumulative_rating / \
                 worker_profile.tasks_submitted
             worker_profile.save()
+
+    def get(self, request, **kwargs):
+        is_organization_admin = verify_organization_admin(
+            request, kwargs['userId'])
+
+        if not is_organization_admin[0]:
+            return Response({'detail': is_organization_admin[1]}, status=400)
+
+        task = get_object_or_none(Task, id=kwargs['taskId'])
+        if not task:
+            return Response({'detail': 'Invalid task specified'}, status=400)
+        if is_organization_admin[2] != task.organization:
+            return Response({'detail': 'Permission denied'}, status=400)
+
+        task_submissions = TaskSubmission.objects.filter(
+            task=task, submission_status='submitted')
+        task_submissions_data = OrganizationAdminTaskSubmissionSerializer(
+            task_submissions, many=True).data
+
+        return Response({'detail': 'success', 'task_submissions': task_submissions_data}, status=200)

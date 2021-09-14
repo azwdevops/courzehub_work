@@ -15,8 +15,14 @@ from core.views import validate_password, fields_empty, verify_user, get_object_
 # celery tasks
 from appemail.tasks import send_user_activation_email_task, send_password_reset_email_task
 from work.models import WorkerApplication
-
+from user.choices import reserved_usernames
 User = get_user_model()
+
+
+# function to check if username is reserved
+def username_reserved(username):
+    if username in reserved_usernames:
+        return True
 
 
 # function to register new user
@@ -28,7 +34,7 @@ def register_user(request):
         if validate_email(data['email']) is not None:
             return Response({'detail': 'email taken'}, status=400)
 
-        if validate_username(data['username']) is not None:
+        if validate_username(data['username']) is not None or username_reserved(data['username']):
             return Response({'detail': 'username taken'}, status=400)
 
         extra_fields = [data['first_name'], data['last_name'],
@@ -154,6 +160,9 @@ def update_user_details(request, userId):
             if len(users) > 0:
                 return Response({'detail': 'Username and email must be unique'}, status=400)
 
+            if username_reserved(data['username']):
+                return Response({'detail': 'Username is taken'}, status=400)
+
             serializer = UserSerializer(user, data=data)
 
             if serializer.is_valid():
@@ -182,7 +191,7 @@ def get_user_data(request):
             user_data = {
                 'user': {
                     **data,
-                    'has_applied_as_worker': user_already_applied_as_worker(user)
+                    'has_applied_as_worker': user_already_applied_as_worker_or_organization_admin(user)
                 }
             }
             return Response({**user_data, 'detail': 'success'}, status=200)
@@ -193,10 +202,14 @@ def get_user_data(request):
 # check if user has already applied as worker
 
 
-def user_already_applied_as_worker(user):
+def user_already_applied_as_worker_or_organization_admin(user):
     # returns None or user instance
     has_applied = get_object_or_none(WorkerApplication, user=user)
     if has_applied:
+        return True
+    # also check if user is organization admin and hide worker application
+    is_organization_admin = user.organization_admin
+    if is_organization_admin:
         return True
     return False
 

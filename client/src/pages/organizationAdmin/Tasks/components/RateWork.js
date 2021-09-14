@@ -59,13 +59,25 @@ const RateWork = (props) => {
       };
 
       await API.post(url, body).then((res) => {
-        setTaskSubmissions(
-          taskSubmissions.map((task_submission) =>
-            task_submission.id === res.data?.rated_submission?.id
-              ? res.data?.rated_submission
-              : task_submission
-          )
-        );
+        if (submission_status === "rejected") {
+          // if submission was rejected, remove it from submissions
+          setTaskSubmissions(
+            taskSubmissions.filter(
+              (task_submission) =>
+                task_submission.id !== currentTaskSubmissionId
+            )
+          );
+        } else if (submission_status === "approved") {
+          // if submission was approved, update the status
+          setTaskSubmissions(
+            taskSubmissions.map((task_submission) =>
+              task_submission.id === res.data?.rated_submission?.id
+                ? res.data?.rated_submission
+                : task_submission
+            )
+          );
+        }
+
         window.alert(res.data?.detail);
         setOpenWorkRating(false);
       });

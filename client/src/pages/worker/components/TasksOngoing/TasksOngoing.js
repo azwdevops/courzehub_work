@@ -65,8 +65,27 @@ const TasksOngoing = (props) => {
       .finally(() => stopLoading());
   };
 
+  // function to handle returning a task
+  const handleReturnTask = async (taskSubmissionId) => {
+    if (window.confirm("Are you sure you want to return this task?")) {
+      const url = `/api/work/worker-tasks-ongoing/${userId}/`;
+      startLoading();
+      await API.patch(url, { taskSubmissionId })
+        .then((res) => {
+          setOngoingTasks(
+            ongoingTasks?.filter(
+              (ongoing_task) => ongoing_task?.id !== taskSubmissionId
+            )
+          );
+          window.alert(res.data?.detail);
+        })
+        .catch((err) => showError(err))
+        .finally(() => stopLoading());
+    }
+  };
+
   return (
-    <MaxDialog isOpen={openTasksOngoing} maxWidth="1300px">
+    <MaxDialog isOpen={openTasksOngoing} maxWidth="1400px">
       <div className="dialog" id={loading ? "pageSubmitting" : ""}>
         <h3>Tasks Ongoing</h3>
         {loading && (
@@ -83,6 +102,7 @@ const TasksOngoing = (props) => {
               <th>Status</th>
               <th>Requirements</th>
               <th>Submit Work</th>
+              <th title="return if unable to complete task">Return Task ?</th>
             </tr>
             {ongoingTasks?.map((ongoing_task, index) => (
               <tr className="table__listingItem">
@@ -106,6 +126,12 @@ const TasksOngoing = (props) => {
                       Submit
                     </button>
                   </form>
+                </td>
+                <td
+                  className="button__sp red bd"
+                  onClick={() => handleReturnTask(ongoing_task?.id)}
+                >
+                  Return
                 </td>
               </tr>
             ))}

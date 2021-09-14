@@ -1,6 +1,7 @@
 // import installed packages
 import { useState, useEffect } from "react";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 // import styles
 // import material ui items
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -61,6 +62,7 @@ const MaintainTasks = (props) => {
                 <th>No:</th>
                 <th>Title</th>
                 <th>Edit</th>
+                <th>Task Attachment</th>
                 <th>Payment Status</th>
                 <th>Submissions</th>
               </tr>
@@ -69,10 +71,19 @@ const MaintainTasks = (props) => {
                   <td>{index + 1}</td>
                   <td>{task?.title}</td>
                   <td
-                    className="dodgerblue bd button"
+                    className="dodgerblue bd button__sp"
                     onClick={() => openEditTaskForm(task)}
                   >
                     edit
+                  </td>
+                  <td>
+                    <Link
+                      to={`${task?.attachment}`}
+                      className="button dodgerblue bd"
+                      target="_blank"
+                    >
+                      view
+                    </Link>
                   </td>
                   <td>
                     {task?.payment_status === null ? (
@@ -98,7 +109,7 @@ const MaintainTasks = (props) => {
                     )}
                   </td>
                   <td
-                    className="button dodgerblue bd"
+                    className="button__sp dodgerblue bd"
                     onClick={() => openTaskSubmissionsForm(task)}
                   >
                     View

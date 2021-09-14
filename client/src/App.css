@@ -48,8 +48,15 @@ button {
   padding: 5px 15px;
   border-radius: 15px;
 }
+.button__sp {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  padding: 5px 15px !important;
+}
 .button:hover,
-button:hover {
+button:hover,
+.button__sp:hover {
   opacity: 0.6;
 }
 a {

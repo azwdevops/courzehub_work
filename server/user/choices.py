@@ -23,3 +23,7 @@ referrer = (
     ('TikTok', 'TikTok'),
     ('Twitter', 'Twitter'),
 )
+
+reserved_usernames = [
+    'worker', 'zachary', 'admin', 'administrator', 'adminstrator', 'zach', 'azw'
+]

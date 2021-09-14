@@ -17,15 +17,15 @@ import { showError } from "../../../../redux/actions/shared";
 const TasksAvailable = (props) => {
   const { openTasksAvailable, userId, loading } = props;
   const { setOpenTasksAvailable, startLoading, stopLoading } = props;
-
   const [availableTasks, setAvailableTasks] = useState([]);
 
   const [openInstructions, setOpenInstructions] = useState(false);
   const [currentTask, setCurrentTask] = useState({});
+  const [checkTasks, setCheckTasks] = useState(true);
 
   // useEffect to get available tasks
   useEffect(() => {
-    if (userId) {
+    if (userId && checkTasks) {
       startLoading();
       const fetchData = async () => {
         const url = `/api/work/worker-tasks-available/${userId}/`;
@@ -35,9 +35,17 @@ const TasksAvailable = (props) => {
       };
       fetchData()
         .catch((err) => showError(err))
-        .finally(() => stopLoading());
+        .finally(() => {
+          setCheckTasks(false);
+          stopLoading();
+        });
     }
-  }, [startLoading, stopLoading, userId]);
+  }, [startLoading, stopLoading, userId, checkTasks]);
+
+  // function to get tasks available
+  const getTasks = () => {
+    setCheckTasks(true);
+  };
 
   const handleOpenInstructions = (task) => {
     setCurrentTask(task);
@@ -83,6 +91,7 @@ const TasksAvailable = (props) => {
               <tr className="table__listingHeader">
                 <th>No:</th>
                 <th>Title</th>
+                <th>Wage (KES)</th>
                 <th>Instructions</th>
                 <th>Attachment</th>
                 <th>Action</th>
@@ -91,6 +100,7 @@ const TasksAvailable = (props) => {
                 <tr className="table__listingItem" key={task?.id}>
                   <td>{index + 1}</td>
                   <td>{task?.title}</td>
+                  <td>{task?.amount}</td>
                   <td
                     className="button dodgerblue bd"
                     onClick={() => handleOpenInstructions(task)}
@@ -121,6 +131,9 @@ const TasksAvailable = (props) => {
           <div className="form__Buttons">
             <button type="button" onClick={() => setOpenTasksAvailable(false)}>
               Close
+            </button>
+            <button type="button" onClick={getTasks}>
+              Refresh
             </button>
           </div>
         </div>

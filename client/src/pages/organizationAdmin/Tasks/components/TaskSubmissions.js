@@ -78,7 +78,7 @@ const TaskSubmissions = (props) => {
                     <td>{task_submission?.submission_rating}</td>
                   ) : (
                     <td
-                      className="button dodgerblue bd"
+                      className="button__sp dodgerblue bd"
                       onClick={() => openWorkRatingForm(task_submission)}
                     >
                       Rate Work

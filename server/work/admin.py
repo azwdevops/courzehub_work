@@ -22,21 +22,22 @@ class WorkApplicationAdmin(ModelAdmin):
 
 @register(WorkerProfile)
 class WorkerProfileAdmin(ModelAdmin):
-    list_display = ('user', 'is_active')
+    list_display = ('user', 'is_active', 'profile_status')
     list_editable = ('is_active',)
 
 
 @register(Task)
 class TaskAdmin(ModelAdmin):
-    list_display = ('id', 'title', 'status', 'amount')
-    list_editable = ('status', 'amount')
+    list_display = ('id', 'title', 'status', 'amount', 'payment_status')
+    list_editable = ('status', 'amount', 'payment_status')
 
 
 @register(TaskSubmission)
 class TaskSubmissionAdmin(ModelAdmin):
-    list_display = ('task',)
+    list_display = ('task', 'submission_status')
+    list_editable = ('submission_status',)
 
 
 @register(TaskSubmissionAttachment)
 class TaskSubmissionAttachmentAdmin(ModelAdmin):
-    list_display = ('task_submission',)
+    list_display = ('task_submission', 'is_active')

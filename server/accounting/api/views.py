@@ -64,7 +64,7 @@ class TaskCreationTransaction():
         else:
             pass
 
-    # clear task creation payment upon being complete, post to tasks payment funds account
+    # clear task creation payment upon being complete, post to organization payables ledger account
     def complete_task_creation_payment(self, **kwargs):
         base_transaction = kwargs['base_transaction']
         total_debits = 0
@@ -79,11 +79,11 @@ class TaskCreationTransaction():
         debit_item.amount = D(base_transaction.amount)
         total_debits += D(debit_item.amount)
 
-        # post to tasks payment funds ledger
+        # post to organization ledger to be cleared once the amount is paid to the worker who did the task
         credit_item = TransactionItem()
         credit_item.base_transaction = base_transaction
         credit_item.ledger = get_object_or_none(
-            Ledger, name__iexact='Tasks Payment Funds')
+            Ledger, name__iexact=f'{base_transaction.organization.name} organization payable ledger')
         credit_item.entry_type = 'Credit'
         credit_item.memo = 'Tasks creation payment confirmed'
         credit_item.amount = D(base_transaction.amount)
