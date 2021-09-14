@@ -208,9 +208,12 @@ def user_already_applied_as_worker_or_organization_admin(user):
     if has_applied:
         return True
     # also check if user is organization admin and hide worker application
-    is_organization_admin = user.organization_admin
-    if is_organization_admin:
-        return True
+    try:
+        is_organization_admin = user.organization_admin
+        if is_organization_admin:
+            return True
+    except:
+        return False
     return False
 
 
