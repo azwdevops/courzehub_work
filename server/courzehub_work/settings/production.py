@@ -3,7 +3,7 @@ import os
 from datetime import timedelta
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['work.courzehub.com']
 CORS_ORIGIN_WHITELIST = ()

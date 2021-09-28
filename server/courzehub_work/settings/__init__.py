@@ -17,7 +17,6 @@ else:
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
 CORS_ORIGIN_ALLOW_ALL = False
 
@@ -32,7 +31,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'corsheaders',
     'rest_framework',
+    'rest_framework_simplejwt',
 
     'core',
     'user',
@@ -93,6 +94,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTH_USER_MODEL = 'user.User'
+
+CORS_ORIGIN_ALLOW_ALL = False
 
 # rest_framework settings
 REST_FRAMEWORK = {
