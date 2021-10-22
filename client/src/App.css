@@ -347,3 +347,9 @@ a {
     /* margin-left: calc(var(--nav-width)); */
   }
 }
+
+@media screen and (max-width: 768px) {
+  .dialog__row {
+    flex-direction: column;
+  }
+}
