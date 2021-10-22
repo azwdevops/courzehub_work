@@ -2,8 +2,8 @@
 .left-navbar {
   position: fixed;
   top: 0;
-  left: -30%;
-  width: var(--nav-width);
+  left: -15px !important;
+  width: 0px;
   height: 100vh;
   background: linear-gradient(to left, var(--first-color), dodgerblue);
   padding: 0.5rem 1rem 0 0;
@@ -64,7 +64,7 @@
 
 /*Add padding body movil*/
 .body-pd {
-  padding-left: calc(var(--nav-width) + 1rem);
+  /* padding-left: calc(var(--nav-width) + 1rem); */
 }
 
 /*Active links*/
@@ -82,13 +82,13 @@
 }
 
 /* ===== MEDIA QUERIES=====*/
-@media screen and (min-width: 768px) {
-  .left-navbar {
-    left: 0;
-    padding: 1rem 1rem 0 0;
-  }
-  /*Show navbar desktop*/
-  .show {
-    width: calc(var(--nav-width) + 150px);
-  }
+/* @media screen and (min-width: 768px) { */
+.left-navbar {
+  left: 0;
+  padding: 1rem 1rem 0 0;
 }
+/*Show navbar desktop*/
+.show {
+  width: calc(var(--nav-width) + 150px);
+}
+/* } */
