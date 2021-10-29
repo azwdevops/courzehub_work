@@ -3,7 +3,7 @@ from __future__ import absolute_import, unicode_literals
 
 from celery.utils.log import get_task_logger
 
-from courzehub.celery import app
+from courzehub_work.celery import app
 from appemail.views import SendTokenEmail
 
 
