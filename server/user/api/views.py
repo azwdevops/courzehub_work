@@ -13,7 +13,7 @@ from core.views import validate_password, fields_empty, verify_user, get_object_
 
 
 # celery tasks
-from appemail.tasks import courzehub_work_send_user_activation_email_task, courzehub_work_send_password_reset_email_task
+from appemail.tasks import send_courzehub_work_password_reset_email_task, send_courzehub_work_user_activation_email_task
 from work.models import WorkerApplication
 from user.choices import reserved_usernames
 User = get_user_model()
@@ -65,7 +65,8 @@ def register_user(request):
                 'username': user.username,
                 'userId': user.id.hex
             }
-            courzehub_work_send_user_activation_email_task.delay(**user_kwargs)
+            send_courzehub_work_user_activation_email_task.apply_async(
+                queue='courzehub_work', args=[], kwargs={**user_kwargs})
 
             return Response({'detail': 'Success. Check your email for the activation link.'}, status=201)
         else:
@@ -109,7 +110,8 @@ def resend_user_activation_email(request):
             'username': user.username,
             'userId': user.id.hex
         }
-        courzehub_work_send_user_activation_email_task.delay(**user_kwargs)
+        send_courzehub_work_user_activation_email_task.delay(
+            queue='courzehub_work', args=[], kwargs={**user_kwargs})
 
         return Response({'detail': 'Email activation sent'}, status=200)
 
@@ -260,7 +262,8 @@ def user_request_password_reset(request):
         'username': user.username,
         'userId': user.id.hex
     }
-    courzehub_work_send_password_reset_email_task.delay(**user_kwargs)
+    send_courzehub_work_password_reset_email_task.delay(
+        queue='courzehub_work', args=[], kwargs={**user_kwargs})
 
     return Response({'detail': 'Password reset instructions sent to mail'}, status=200)
 

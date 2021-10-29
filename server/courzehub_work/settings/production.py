@@ -39,14 +39,16 @@ DATABASES = {
 }
 
 # email configurations for sending emails
-EMAIL_BACKEND = os.environ['EMAIL_BACKEND']
-EMAIL_HOST = os.environ['EMAIL_HOST']
-EMAIL_PORT = os.environ['EMAIL_PORT']
-EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
-# to send as domain but using gmail, we use the default sender email
-DEFAULT_SENDER_EMAIL = os.environ['DEFAULT_SENDER_EMAIL']
-EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
-EMAIL_USE_TLS = os.environ['EMAIL_USE_TLS']
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+# not working when email is in environment, to be solved later
+# EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+# not working when email password is in environment, to be solved later
+# EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
+EMAIL_HOST_USER = 'noreply.courzehub@gmail.com'
+EMAIL_HOST_PASSWORD = 'sousapzoqsbqymoa'
+EMAIL_USE_TLS = True
 
 
 #  AWS settings for media files
