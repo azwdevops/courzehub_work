@@ -9,12 +9,12 @@ from core.views import generate_encoded_token
 if settings.PRODUCTION:
     site_name = os.environ['SITE_NAME_COURZEHUB_WORK']
     site_url = os.environ['SITE_URL_COURZEHUB_WORK']
-    email_sentby = os.environ['DEFAULT_SENDER_EMAIL']
+    email_sentby = os.environ['EMAIL_HOST_USER']
 else:
     from decouple import config
     site_name = config('SITE_NAME')
     site_url = config('SITE_URL')
-    email_sentby = config('DEFAULT_SENDER_EMAIL')
+    email_sentby = config('EMAIL_HOST_USER')
 
 
 class SendTokenEmail:
