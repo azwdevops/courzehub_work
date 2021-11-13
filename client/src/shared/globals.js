@@ -8,6 +8,6 @@ const globals = {
   liveProduction: true, // for work.courzehub.com domain
   devHome: "http://localhost:8000", // for local development
   testHome: "https://courzehub-work.herokuapp.com", // for heroku production
-  productionHome: "https://work.courzehub.com", // for live production
+  productionHome: "https://work.azwgroup.com", // for live production
 };
 export default globals;
