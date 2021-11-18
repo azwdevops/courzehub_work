@@ -15,7 +15,7 @@ User = get_user_model()
 # keys used for encoding and decoding
 # keys used for encoding and decoding
 if settings.PRODUCTION:
-    token_generation_key = os.environ['TOKEN_GENERATION_SECRET_COURZEHUB_WORK']
+    token_generation_key = os.environ['TOKEN_GENERATION_SECRET']
 else:
     from decouple import config
     token_generation_key = config('TOKEN_GENERATION_SECRET')
