@@ -1,9 +1,9 @@
 // import installed packages
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { connect } from "react-redux";
 
 // import styles
-import "./Sidebar.css";
+import "./Sidebar.scss";
 // import material ui items
 
 // import shared/global items
@@ -16,7 +16,7 @@ import OrganizationAdminLinks from "../Links/OrganizationAdminLinks";
 import WorkerLinks from "../Links/WorkerLinks";
 
 const Sidebar = (props) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { pathname } = useLocation();
   const { loggedIn, profile_type } = props;
   const { logoutUser } = props;
@@ -82,7 +82,7 @@ const Sidebar = (props) => {
               <Link
                 to=""
                 className="nav__link"
-                onClick={() => logoutUser(history)}
+                onClick={() => logoutUser(navigate)}
               >
                 <i className="bx bx-log-out-circle"></i>
                 <span className="nav__name">Logout</span>
@@ -104,7 +104,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    logoutUser: (history) => dispatch(logout(history)),
+    logoutUser: (navigate) => dispatch(logout(navigate)),
   };
 };
 

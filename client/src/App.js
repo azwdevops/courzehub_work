@@ -1,24 +1,24 @@
 // import installed packages
 import { useEffect } from "react";
 import { connect } from "react-redux";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 // import styles
-import "./App.css";
+import "./App.scss";
 // import material ui items
 
 // import shared/global items
 import PrivateRoute from "./shared/PrivateRoute";
 // import components/pages
-import Header from "./components/common/Header";
+import Header from "./components/common/Header/Header";
 // import Footer from "./components/common/Footer";
 import Home from "./pages/Home/Home";
 import Sidebar from "./components/common/Sidebar/Sidebar";
-import Dashboard from "./pages/Dashboard";
-import ActivateAccount from "./pages/ActivateAccount";
+import Dashboard from "./pages/Dashboard/Dashboard";
+import ActivateAccount from "./pages/ActivateAccount/ActivateAccount";
 import ResetPasswordConfirm from "./pages/ResetPasswordConfirm";
-import NotFound from "./pages/NotFound";
-import Profile from "./pages/Profile";
+import NotFound from "./pages/NotFound/NotFound";
+import Profile from "./pages/Profile/Profile";
 import MaintainOrganizations from "./pages/systemAdmin/MaintainOrganizations/MaintainOrganizations";
 import MaintainTasks from "./pages/organizationAdmin/Tasks/MaintainTasks";
 import MaintainWorkers from "./pages/systemAdmin/MaintainWorkers/MaintainWorkers";
@@ -44,60 +44,62 @@ function App(props) {
       <Router>
         <Header />
         <Sidebar />
-        <Switch>
+        <Routes>
           {/* unauthenticated routes */}
-          <Route exact path="/" component={Home} />
+          <Route exact path="/" element={<Home />} />
           <Route
             exact
             path="/user/password-reset/:password_token/"
-            component={ResetPasswordConfirm}
+            element={<ResetPasswordConfirm />}
           />
           <Route
             exact
             path="/user/activate/:activation_token/"
-            component={ActivateAccount}
+            element={<ActivateAccount />}
           />
           {/* authenticated routes */}
-          {/* SYSTEM ADMIN ROUTES */}
-          {profile_type === "System Admin" && (
-            <>
-              <PrivateRoute
+          <Route exact path="/" element={<PrivateRoute />}>
+            {/* SYSTEM ADMIN ROUTES */}
+            {profile_type === "System Admin" && (
+              <>
+                <Route
+                  exact
+                  path="/sys-admin/maintain-organizations/"
+                  element={<MaintainOrganizations />}
+                />
+                <Route
+                  exact
+                  path="/sys-admin/maintain-workers/"
+                  element={<MaintainWorkers />}
+                />
+              </>
+            )}
+
+            {/* ORGANIZATION ADMIN ROUTES */}
+            {profile_type === "Organization Admin" && (
+              <Route
                 exact
-                path="/sys-admin/maintain-organizations/"
-                component={MaintainOrganizations}
+                path="/organization-admin/maintain-tasks/"
+                element={<MaintainTasks />}
               />
-              <PrivateRoute
+            )}
+
+            {/* END OF SYSTEM ADMIN LINKS */}
+            {/* WORKER LINKS */}
+            {profile_type === "Worker" && (
+              <Route
                 exact
-                path="/sys-admin/maintain-workers/"
-                component={MaintainWorkers}
+                path="/worker/work-center/"
+                element={<WorkCenter />}
               />
-            </>
-          )}
+            )}
 
-          {/* ORGANIZATION ADMIN ROUTES */}
-          {profile_type === "Organization Admin" && (
-            <PrivateRoute
-              exact
-              path="/organization-admin/maintain-tasks/"
-              component={MaintainTasks}
-            />
-          )}
-
-          {/* END OF SYSTEM ADMIN LINKS */}
-          {/* WORKER LINKS */}
-          {profile_type === "Worker" && (
-            <PrivateRoute
-              exact
-              path="/worker/work-center/"
-              component={WorkCenter}
-            />
-          )}
-
-          {/* END OF WORKER LINKS */}
-          <PrivateRoute exact path="/profile" component={Profile} />
-          <PrivateRoute exact path="/dashboard/" component={Dashboard} />
-          <Route component={NotFound} />
-        </Switch>
+            {/* END OF WORKER LINKS */}
+            <Route exact path="/profile" element={<Profile />} />
+            <Route exact path="/dashboard/" element={<Dashboard />} />
+          </Route>
+          <Route element={<NotFound />} />
+        </Routes>
       </Router>
     </div>
   );

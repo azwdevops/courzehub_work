@@ -4,7 +4,7 @@ import TasksAvailable from "../components/TasksAvailable/TasksAvailable";
 import TasksOngoing from "../components/TasksOngoing/TasksOngoing";
 import TasksSubmitted from "../components/TasksSubmitted/TasksSubmitted";
 // import styles
-import "./WorkCenter.css";
+import "./WorkCenter.scss";
 // import material ui items
 // import shared/global items
 // import components/pages

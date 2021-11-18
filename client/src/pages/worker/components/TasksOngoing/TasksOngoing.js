@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import moment from "moment";
 // import styles
-import "./TasksOngoing.css";
+import "./TasksOngoing.scss";
 // import material ui items
 import CircularProgress from "@material-ui/core/CircularProgress";
 // import shared/global items

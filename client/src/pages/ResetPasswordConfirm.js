@@ -1,9 +1,9 @@
 // import installed packages
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { connect } from "react-redux";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 // import styles
-import "../styles/pages/ActivateAccount.css";
+import "./ActivateAccount/ActivateAccount.scss";
 // import material ui items
 import CircularProgress from "@material-ui/core/CircularProgress";
 // import shared/global items
@@ -19,11 +19,10 @@ import {
   OPEN_PASSWORD_RESET_CONFIRM,
   START_LOADING,
 } from "../redux/actions/types";
-import { setAlert } from "../redux/actions/shared";
 import { set_password } from "../redux/actions/auth";
 
 const ResetPasswordConfirm = (props) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { password_token } = useParams();
   const { loading, alert, resetPasswordConfirmForm } = props; // extract state from props
   const {
@@ -67,7 +66,7 @@ const ResetPasswordConfirm = (props) => {
     startLoading();
 
     // call the signup action creator
-    setNewPassword(newPasswords, password_token, history);
+    setNewPassword(newPasswords, password_token, navigate);
   };
 
   return (
@@ -125,7 +124,6 @@ const mapStateToProps = (state) => {
   return {
     loading: state.shared?.loading,
     resetPasswordConfirmForm: state.auth?.resetPasswordConfirmForm,
-    alert: state.shared?.alert,
   };
 };
 
@@ -136,7 +134,6 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(set_password(newPasswords, password_token, history)),
     openNewPassword: () => dispatch({ type: OPEN_PASSWORD_RESET_CONFIRM }),
     closeNewPassword: () => dispatch({ type: CLOSE_PASSWORD_RESET_CONFIRM }),
-    newAlert: (type, detail) => dispatch(setAlert(type, detail)),
   };
 };
 

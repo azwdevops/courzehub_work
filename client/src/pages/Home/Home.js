@@ -1,8 +1,8 @@
 // import installed packages
 import { connect, useDispatch } from "react-redux";
-import { Link, useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 // import styles
-import "./Home.css";
+import "./Home.scss";
 // import material ui items
 // import shared/global items
 // import components/pages
@@ -11,15 +11,15 @@ import { OPEN_LOGIN } from "../../redux/actions/types";
 
 const Home = (props) => {
   const { userId, profile_type } = props;
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const workerStartNow = () => {
     if (userId) {
       if (profile_type === "Worker") {
-        history.push(`/worker/work-center/`);
+        navigate(`/worker/work-center/`, { replace: true });
       } else {
-        history.push("/profile");
+        navigate("/profile", { replace: true });
       }
     } else {
       dispatch({ type: OPEN_LOGIN });
@@ -29,9 +29,9 @@ const Home = (props) => {
   const companyGetStarted = () => {
     if (userId) {
       if (profile_type === "Organization Admin") {
-        history.push(`/organization-admin/maintain-tasks/`);
+        navigate(`/organization-admin/maintain-tasks/`, { replace: true });
       } else {
-        history.push("/profile");
+        navigate("/profile", { replace: true });
       }
     } else {
       dispatch({ type: OPEN_LOGIN });

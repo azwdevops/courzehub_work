@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 // import material ui items
 import CircularProgress from "@material-ui/core/CircularProgress";
 // import shared/global items
-import globals from "../../shared/globals";
+
 // import components/pages
 import MinDialog from "../common/MinDialog";
 
@@ -17,17 +17,14 @@ import {
   START_LOADING,
 } from "../../redux/actions/types";
 import { resend_activation } from "../../redux/actions/auth";
-import { setAlert } from "../../redux/actions/shared";
 
 const ReactivateAccount = (props) => {
-  const { loading, alert, resendActivationForm } = props; // extract state from props
-  const { startLoading, newAlert, closeResendActivation, resendActivation } =
-    props; // extract dispatch actions from props
+  const { loading, resendActivationForm } = props; // extract state from props
+  const { startLoading, closeResendActivation, resendActivation } = props; // extract dispatch actions from props
 
   const [email, setEmail] = useState("");
 
   // ###################### destructuring to make code organized ######################### //
-  const { error } = globals;
   // ###################### end destructuring to make code organized ######################### //
 
   const resetForm = () => {
@@ -43,7 +40,7 @@ const ReactivateAccount = (props) => {
   const resendAccountConfirmationLink = (e) => {
     e.preventDefault();
     if (email.trim() === "") {
-      return newAlert(error, "Email required");
+      return window.alert("Email required");
     }
     startLoading();
     // call the signup action creator
@@ -57,9 +54,6 @@ const ReactivateAccount = (props) => {
     >
       <form className="dialog" id={loading ? "formSubmitting" : ""}>
         <h3>Enter email to resend confirmation link</h3>
-        <p className={`response__message ${alert.alertType}`}>
-          {alert.status && alert.detail}
-        </p>
         {loading && (
           <CircularProgress
             style={{ position: "absolute", marginLeft: "40%" }}
@@ -91,7 +85,6 @@ const ReactivateAccount = (props) => {
 const mapStateToProps = (state) => {
   return {
     loading: state.shared?.loading,
-    alert: state.shared?.alert,
     resendActivationForm: state.auth?.resendActivationForm,
   };
 };
@@ -99,7 +92,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     startLoading: () => dispatch({ type: START_LOADING }),
-    newAlert: (type, detail) => dispatch(setAlert(type, detail)),
     closeResendActivation: () => dispatch({ type: CLOSE_RESEND_ACTIVATION }),
     resendActivation: (email, resetForm) =>
       dispatch(resend_activation(email, resetForm)),

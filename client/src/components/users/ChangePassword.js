@@ -1,14 +1,13 @@
 // import installed packages
 import { useState } from "react";
 import { connect } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 // import styles
 
 // import material ui items
 import CircularProgress from "@material-ui/core/CircularProgress";
 // import shared/global items
 import { ifEmpty, resetFormValues } from "../../shared/sharedFunctions";
-import globals from "../../shared/globals";
 // import components/pages
 import MinDialog from "../common/MinDialog";
 
@@ -17,18 +16,12 @@ import {
   CLOSE_CHANGE_PASSWORD,
   START_LOADING,
 } from "../../redux/actions/types";
-import { setAlert } from "../../redux/actions/shared";
 import { change_password } from "../../redux/actions/auth";
 
 const ChangePassword = (props) => {
-  const history = useHistory();
-  const { loading, alert, changePasswordForm, userId } = props; // extract state from props
-  const {
-    startLoading,
-    newAlert,
-    changeUserPassword,
-    closeChangePassword,
-  } = props; // extract dispatch actions from props
+  const navigate = useNavigate();
+  const { loading, changePasswordForm, userId } = props; // extract state from props
+  const { startLoading, changeUserPassword, closeChangePassword } = props; // extract dispatch actions from props
 
   // internal state
   const [passwords, setPasswords] = useState({
@@ -39,7 +32,6 @@ const ChangePassword = (props) => {
 
   //############### destructuring code ###################//
   const { current_password, new_password, confirm_new_password } = passwords;
-  const { error } = globals;
   //#################end of destructuring ###########//
 
   const resetForm = () => {
@@ -60,19 +52,16 @@ const ChangePassword = (props) => {
   const handlePasswordChange = (e) => {
     e.preventDefault();
     if (ifEmpty(passwords)) {
-      return newAlert(error, "All fields are required");
+      return window.alert("All fields are required");
     }
     startLoading();
     // call the signup action creator
-    changeUserPassword(passwords, userId, history, resetForm);
+    changeUserPassword(passwords, userId, navigate, resetForm);
   };
   return (
     <MinDialog isOpen={changePasswordForm}>
       <form className="dialog" id={loading ? "formSubmitting" : ""}>
         <h3>Change your password here</h3>
-        <p className={`response__message ${alert?.alertType}`}>
-          {alert?.status && alert?.detail}
-        </p>
         <div className="dialog__rowSingleItem">
           <label htmlFor="">Old Password</label>
           <input
@@ -121,7 +110,6 @@ const ChangePassword = (props) => {
 const mapStateToProps = (state) => {
   return {
     loading: state.shared?.loading,
-    alert: state.shared?.alert,
     changePasswordForm: state.auth?.changePasswordForm,
     userId: state.auth.user?.id,
   };
@@ -133,7 +121,6 @@ const mapDispatchToProps = (dispatch) => {
     changeUserPassword: (passwords, userId, history, resetForm) =>
       dispatch(change_password(passwords, userId, history, resetForm)),
     closeChangePassword: () => dispatch({ type: CLOSE_CHANGE_PASSWORD }),
-    newAlert: (type, detail) => dispatch(setAlert(type, detail)),
   };
 };
 

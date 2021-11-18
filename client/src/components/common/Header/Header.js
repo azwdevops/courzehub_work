@@ -1,27 +1,26 @@
 // import installed packages
 import { useSelector, useDispatch } from "react-redux";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 // import styles
 
-import "../../styles/components/common/Header.css";
+import "./Header.scss";
 // import material ui items
 import Avatar from "@material-ui/core/Avatar";
 // import shared/global items
-import { showNavbar } from "../../shared/scripts";
+import { showNavbar } from "../../../shared/scripts";
 // import components/pages
-import Login from "../users/Login";
-import Signup from "../users/Signup";
-import ForgotPassword from "../users/ForgotPassword";
-import ReactivateAccount from "../users/ReactivateAccount";
+import Login from "../../users/Login";
+import Signup from "../../users/Signup";
+import ForgotPassword from "../../users/ForgotPassword";
+import ReactivateAccount from "../../users/ReactivateAccount";
 
 // import redux API
-import { OPEN_LOGIN, OPEN_SIGNUP } from "../../redux/actions/types";
-import { logout } from "../../redux/actions/auth";
+import { OPEN_LOGIN, OPEN_SIGNUP } from "../../../redux/actions/types";
+import { logout } from "../../../redux/actions/auth";
 
 const Header = () => {
   const dispatch = useDispatch();
-  const location = useLocation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const session_cookie = localStorage.getItem("session_cookie");
   const username = useSelector((state) => state.auth.user?.username);
   const userImage = useSelector((state) => state.auth?.userImage);
@@ -52,7 +51,7 @@ const Header = () => {
                 <li>
                   <Link to="/dashboard/">Dashboard</Link>
                 </li>
-                <li onClick={() => dispatch(logout(history))}>Logout</li>
+                <li onClick={() => dispatch(logout(navigate))}>Logout</li>
               </ul>
             </>
           </div>

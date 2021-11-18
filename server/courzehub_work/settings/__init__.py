@@ -6,6 +6,8 @@ from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
+SITE_NAME = 'CourZe Hub Work'
+
 PRODUCTION = True
 
 # production settings
@@ -15,11 +17,7 @@ if PRODUCTION:
 else:
     from .dev import *
 
-
 # SECURITY WARNING: don't run with debug turned on in production!
-
-CORS_ORIGIN_ALLOW_ALL = False
-
 
 # Application definition
 
@@ -108,6 +106,12 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 2
 }
+
+# email configurations for sending emails
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 
 
 # Internationalization

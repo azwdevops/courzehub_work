@@ -1,14 +1,11 @@
 import axios from "axios";
 import globals from "./globals";
 
-const { liveProduction, testProduction, devHome, testHome, productionHome } =
-  globals;
+const { liveProduction, devHome, productionHome } = globals;
 
 let URL;
 
-if (testProduction) {
-  URL = testHome;
-} else if (liveProduction) {
+if (liveProduction) {
   URL = productionHome;
 } else {
   URL = devHome;

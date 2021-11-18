@@ -3,7 +3,7 @@ import ContentEditable from "react-contenteditable";
 import Toolbar from "./Toolbar";
 
 // styles
-import "./Markdown.css";
+import "./Markdown.scss";
 
 const Markdown = ({ content, setContent }) => {
   // there is no need to maintain state as we can just access the data through getting the element and then the innerHTML

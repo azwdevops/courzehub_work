@@ -1,17 +1,12 @@
 import React from "react";
-import { Route, Redirect } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
-const PrivateRoute = ({ component: Component, ...rest }) => (
-  <Route
-    {...rest}
-    render={(props) =>
-      localStorage.getItem("session_cookie") ? (
-        <Component {...props} />
-      ) : (
-        <Redirect to="/" />
-      )
-    }
-  />
-);
+const PrivateRoute = () => {
+  return localStorage.getItem("session_cookie") ? (
+    <Outlet />
+  ) : (
+    <Navigate to="/" />
+  );
+};
 
 export default PrivateRoute;

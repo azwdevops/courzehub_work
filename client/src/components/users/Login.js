@@ -1,5 +1,5 @@
 // import installed packages
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { connect } from "react-redux";
 
 // import styles
@@ -7,7 +7,6 @@ import { connect } from "react-redux";
 // import material ui items
 import CircularProgress from "@material-ui/core/CircularProgress";
 // import shared/global items
-import globals from "../../shared/globals";
 import { ifEmpty, resetFormValues } from "../../shared/sharedFunctions";
 // import components/pages
 import MinDialog from "../common/MinDialog";
@@ -20,14 +19,12 @@ import {
   OPEN_SIGNUP,
   START_LOADING,
 } from "../../redux/actions/types";
-import { setAlert } from "../../redux/actions/shared";
 import { login } from "../../redux/actions/auth";
 
 const Login = (props) => {
-  const { loading, alert, loginForm } = props; // extract state from props
+  const { loading, loginForm } = props; // extract state from props
   const {
     startLoading,
-    newAlert,
     loginUser,
     closeLogin,
     openPasswordReset,
@@ -40,7 +37,6 @@ const Login = (props) => {
   });
 
   // destructuring
-  const { error } = globals;
   const { email, password } = loginData;
 
   // reset form values
@@ -57,7 +53,7 @@ const Login = (props) => {
   const handleLogin = (e) => {
     e.preventDefault();
     if (ifEmpty(loginData)) {
-      return newAlert(error, "Email and password required");
+      return window.alert("Email and password required");
     }
     startLoading();
     // call the signup action creator
@@ -90,9 +86,6 @@ const Login = (props) => {
       <MinDialog isOpen={loginForm} maxWidth="500px">
         <form className="dialog" id={loading ? "formSubmitting" : ""}>
           <h3>Login here</h3>
-          <p className={`response__message ${alert.alertType}`}>
-            {alert.status && alert.detail}
-          </p>
           <div className="dialog__rowSingleItem">
             <label htmlFor="">Email</label>
             <input
@@ -161,13 +154,11 @@ const mapStateToProps = (state) => {
   return {
     loading: state.shared?.loading,
     loginForm: state.auth.loginForm,
-    alert: state.shared.alert,
   };
 };
 const mapDispatchToProps = (dispatch) => {
   return {
     startLoading: () => dispatch({ type: START_LOADING }),
-    newAlert: (type, detail) => dispatch(setAlert(type, detail)),
     loginUser: (loginData, resetForm) => dispatch(login(loginData, resetForm)),
     closeLogin: () => dispatch({ type: CLOSE_LOGIN }),
     openPasswordReset: () => dispatch({ type: OPEN_FORGOT_PASSWORD }),

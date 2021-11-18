@@ -3,17 +3,17 @@ import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 
 // import styles
-import "../styles/pages/Profile.css";
+import "./Profile.scss";
 // import material ui items
 import CircularProgress from "@material-ui/core/CircularProgress";
 // import shared/global items
-import { ifEmpty } from "../shared/sharedFunctions";
+import { ifEmpty } from "../../shared/sharedFunctions";
 // import components/pages
-import ChangePassword from "../components/users/ChangePassword";
-import WorkerApplication from "./worker/components/WorkerApplication";
+import ChangePassword from "../../components/users/ChangePassword";
+import WorkerApplication from "../worker/components/WorkerApplication";
 // import redux API
-import { OPEN_CHANGE_PASSWORD, START_LOADING } from "../redux/actions/types";
-import { update_user } from "../redux/actions/auth";
+import { OPEN_CHANGE_PASSWORD, START_LOADING } from "../../redux/actions/types";
+import { update_user } from "../../redux/actions/auth";
 
 const Profile = (props) => {
   const {

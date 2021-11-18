@@ -6,14 +6,14 @@ from django.conf import settings
 
 from core.views import generate_encoded_token
 
+site_name = 'CourZe Hub Work'
+
 if settings.PRODUCTION:
-    site_name = os.environ['SITE_NAME_COURZEHUB_WORK']
-    site_url = os.environ['SITE_URL_COURZEHUB_WORK']
+    site_url = 'https://work.azwgroup.com'
     email_sentby = os.environ['EMAIL_HOST_USER']
 else:
     from decouple import config
-    site_name = config('SITE_NAME')
-    site_url = config('SITE_URL')
+    site_url = 'http://localhost:8000'
     email_sentby = config('EMAIL_HOST_USER')
 
 

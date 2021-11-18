@@ -3,21 +3,6 @@ import globals from "../../shared/globals";
 
 const { unknown_error } = globals;
 
-export const setAlert = (alertType, detail) => async (dispatch) => {
-  // set alert
-  // alertType is either success or error
-  // detail is the message
-  dispatch({ type: SET_ALERT, payload: { status: true, alertType, detail } });
-
-  // remove alert after 3 seconds
-  setTimeout(() => {
-    dispatch({
-      type: REMOVE_ALERT,
-      payload: { status: false, alertType: "", detail: "" },
-    });
-  }, 3000);
-};
-
 // START OF reusable functions
 // show error function
 export const showError = (err) => {

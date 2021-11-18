@@ -1,7 +1,7 @@
 import React from "react";
 
 // styles
-import "../styles/pages/Dashboard.css";
+import "./Dashboard.scss";
 
 const Dashboard = () => {
   return (
